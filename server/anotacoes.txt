@@ -1,0 +1,34 @@
+**WEB**
+
+Iniciar projeto
+    npx create-react-app nome --template typescript
+Rodar projeto 
+    npm start
+Adicionar tipagem typescript
+    yarn add @types/nome da dependencia -D
+
+**SERVER**
+Iniciar servidor 
+    yarn init -y
+Adicionar typescript
+     yarn add typescript -D
+Iniciar typescript 
+    yarn tsc --init
+Verificar mudanca no codigo
+    yarn add ts-node-dev -D
+
+Rotas e recursos
+    rota - endereço da aplicação
+    recursos - final da rota
+
+Métodos HTTP
+    GET - buscar ou listar informação
+    POST - criar alguma nova informação
+    PUT - atualizar informação
+    DELETE - deletar informação
+
+Parâmetros
+    body - dados para a criação ou atualização do registro
+    route - identificar qual recursos quer atualizar ou deletar
+    query - paginação, filtro, ordenação
+
