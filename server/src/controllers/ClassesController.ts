@@ -11,29 +11,34 @@ interface ScheduleItem {
 export default class ClassesController {
     
     async Index (request: Request, response: Response) {
-        const filters = request.query
+        const filters = request.query;
 
-        if (!filters.week_day || !filters.subject || !filters.time){
-            return response.status(400).json({ error: 'Missing filters to search classes'})
+        const subject = filters.subject as string;
+        const week_day = filters.week_day as string;
+        const time = filters.time as string;
+
+        if (!filters.week_day || !filters.subject || !filters.time) {
+        return response.status(400).json({
+            error: 'Missing filters to search classes',
+        });
         }
 
-        const timeInMinutes = convertHourToMinutes(filters.time as string)
+        const timeInMinutes = convertHourToMinutes(time);
 
         const classes = await db('classes')
-            .whereExists(function(){
-                this.select('classes_schedule.*')
-                    .from('classes_schedule')
-                    .whereRaw('`classes_schedule`.`class_id` = `classes`.`id`')
-                    .whereRaw('`classes_schedule`.`week_day` = ??', [Number(filters.week_day as string)])
-                    .whereRaw('`classes_schedule`.`from` <= ??', [timeInMinutes])
-                    .whereRaw('`classes_schedule`.`from` > ??', [timeInMinutes])
+        .whereExists(function () {
+            this.select('classes_schedule.*')
+            .from('classes_schedule')
+            .whereRaw('`classes_schedule`.`class_id`')
+            .whereRaw('`classes_schedule`.`week_day` = ??', [Number(week_day)])
+            .whereRaw('`classes_schedule`.`from` <= ??', [timeInMinutes])
+            .whereRaw('`classes_schedule`.`to` > ??', [timeInMinutes]);
+        })
+        .where('classes.subject', '=', subject)
+        .join('users', 'classes.user_id', '=', 'users.id')
+        .select(['classes.*', 'users.*']);
 
-            })
-            .where('classes.subject', '=', filters.subject as string)
-            .join('users', 'classes.user_id', '=', 'users.id')
-            .select(['classes.*', 'users.*'])
-
-        return response.json(classes)
+        return response.json(classes);
     }
 
     async Create (request: Request, response: Response) {
